@@ -30,7 +30,7 @@ contract Project{
         contributors.push(contributor);
         amtRaised += amtContributed;
 
-        if (now > deadline) || (amtRaised > amtToBeRaised)
+        if (now > deadline || amtRaised > amtToBeRaised)
         {
             // return amoutn contributed to contributor
             returnAmt();
@@ -52,7 +52,7 @@ contract Project{
         address contribAddress;
         uint    contribAmt;
 
-        for (unit i = 0; i < this.contributors.length, i++) {
+        for (uint i = 0; i < this.contributors.length; i++) {
             contribAddress = contributors[i];
             contribAmt     = contributions[i];
             if (!contribAddress.send(contribAmt)) throw;
