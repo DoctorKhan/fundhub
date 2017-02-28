@@ -33,7 +33,7 @@ contract FundingHub {
     
     function contribute(address projectAddress, address contributor) {
         Project project = Project(projectAddress);
-        contribution = msg.value;
+        var contribution = msg.value;
         project.fund.value(contribution)(contributor, contribution);
     }
 }
