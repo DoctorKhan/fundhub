@@ -1,7 +1,7 @@
 # fundhub
 An ethereum crowdsourcing platform in the vein of kickstarter.
 
-Incomplete:
+In progress:
 1) web interface
 2) testing framework for refund
 
