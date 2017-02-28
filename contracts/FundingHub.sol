@@ -7,6 +7,7 @@ import "Project.sol";
 contract FundingHub {
     address[] allContracts;
     event NewProjectEvent(address indexed projectAddress, uint targetAmt, uint deadline); 
+
     function FundingHub() {
         
     }
@@ -19,11 +20,10 @@ contract FundingHub {
            the Project contract requires. */
 
     function createProject(address owner, uint targetAmt, uint deadline) returns (address) {
-        /* deploy new project */
-        
+    
+        // deploy new project 
         address newContract = new Project(owner, targetAmt, deadline);
-        /* keep track of address */
-        allContracts.push(newContract);
+        allContracts.push(newContract); // keep track of address 
         
         NewProjectEvent(newContract, targetAmt, deadline); // Browser return
         return newContract; // Smart contract return
