@@ -3,8 +3,9 @@ pragma solidity ^0.4.2;
 contract Project{
     address owner;
     uint amtRaised; // in wei
-    uint targetAmt;
+    uint targetAmt; // the target goal to be raised
     uint deadline; // the time until when the amt has to be raised
+    bool isClosed;
     
     uint[] contributions;
     address[] contributors;
@@ -14,6 +15,7 @@ contract Project{
         targetAmt = _targetAmt;
         deadline = _deadline;
         amtRaised = 0;
+        isClosed = false;
     }
     
     /* This is the function called when the FundingHub receives a contribution. The function must 
@@ -23,8 +25,8 @@ contract Project{
     If the full funding amount has been reached, the function must call payout. If the deadline has passed without the funding goal being reached, the function must call refund. */
     
     function fund(address contributor, uint amtContributed) payable {
-        // check if amt sent
-        if (amtContributed != msg.value) throw;
+        // if incorrect amt sent or project closed, abort
+        if ((amtContributed != msg.value) || isClosed) throw;
 
         // otherwise add to amt
         // optionally: check if contributor has multiple contributions
@@ -44,18 +46,29 @@ contract Project{
     
     // This is the function that sends all funds received in the contract to the owner of the project.
     function payout() {
-        if (!owner.send(amtRaised)) throw;
+        if (isClosed)
+            throw;
+        else
+            if (!owner.send(amtRaised)) throw;
+        isClosed = true;
+        return isClosed;
     }
 
     /* This function sends all individual contributions back to the respective contributor, or lets all contributors retrieve their contributions. */
     function refund() {
-        address contribAddress;
-        uint    contribAmt;
+        if (isClosed)
+            throw;
+        else {
+            address contribAddress;
+            uint    contribAmt;
 
-        for (uint i = 0; i < contributors.length; i++) {
-            contribAddress = contributors[i];
-            contribAmt     = contributions[i];
-            if (!contribAddress.send(contribAmt)) throw;
+            for (uint i = 0; i < contributors.length; i++) {
+                contribAddress = contributors[i];
+                contribAmt     = contributions[i];
+                if (!contribAddress.send(contribAmt)) throw;
+            }
         }
+        isClosed = true;
+        return isClosed;
     }
 }
