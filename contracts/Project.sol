@@ -51,7 +51,6 @@ contract Project{
         else
             if (!owner.send(amtRaised)) throw;
         isClosed = true;
-        return isClosed;
     }
 
     /* This function sends all individual contributions back to the respective contributor, or lets all contributors retrieve their contributions. */
@@ -69,6 +68,5 @@ contract Project{
             }
         }
         isClosed = true;
-        return isClosed;
     }
 }
