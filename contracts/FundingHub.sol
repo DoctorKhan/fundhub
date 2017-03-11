@@ -5,8 +5,9 @@ import "Project.sol";
 // This is a crowdfunding app 
 
 contract FundingHub {
-    address[] allContracts;
+    address[] projects;
     event NewProjectEvent(address indexed projectAddress, uint targetAmt, uint deadline); 
+    event getProjectInfoEvent(bytes32 projectsString);
 
     function FundingHub() {
         
@@ -19,15 +20,24 @@ contract FundingHub {
         4. The createProject() function should accept all constructor values that 
            the Project contract requires. */
 
-    function createProject(address owner, uint targetAmt, uint deadline) returns (address) {
+    function createProject(address projOwnerAddr, uint targetAmt, uint deadline) returns (address) {
     
         // deploy new project 
-        address newContract = new Project(owner, targetAmt, deadline);
-        allContracts.push(newContract); // keep track of address 
+        address newProjectAddr = new Project(projOwnerAddr, targetAmt, deadline);
+        projects.push(newProjectAddr); // keep track of address 
         
-        NewProjectEvent(newContract, targetAmt, deadline); // Browser return
-        return newContract; // Smart contract return
+        NewProjectEvent(newProjectAddr, targetAmt, deadline); // Browser return
+        return newProjectAddr; // Smart contract return
     }
+
+    function getProjectInfo() returns (address[]) {
+        var projectsString = "";
+        for (uint ii = 0; ii < projects.length; ii++) {
+            var p = projects[ii];
+            projectsString += p.owner + " " + p.raisedAmt + "/" + p.targetAmt + " " + p.deadline + "\n";
+        }
+        getProjectInfoEvent(projectsString);
+       } 
     
     /* This function allows users to contribute to a Project identified by its address. 
     contribute calls the fund() function in the individual Project contract and 

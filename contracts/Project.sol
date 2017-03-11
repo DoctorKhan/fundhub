@@ -2,9 +2,11 @@ pragma solidity ^0.4.2;
 
 contract Project{
     address owner;
-    uint amtRaised; // in wei
+    uint raisedAmt; // in wei
     uint targetAmt; // the target goal to be raised
     uint deadline; // the time until when the amt has to be raised
+    bytes32 name;
+    bytes32 descr;
     bool isClosed;
     
     uint[] contributions;
@@ -14,7 +16,7 @@ contract Project{
         owner = _owner;
         targetAmt = _targetAmt;
         deadline = _deadline;
-        amtRaised = 0;
+        raisedAmt = 0;
         isClosed = false;
     }
     
@@ -33,14 +35,14 @@ contract Project{
         contributions.push(amtContributed);
         contributors.push(contributor);
         
-        amtRaised += amtContributed;
+        raisedAmt += amtContributed;
 
         var now = block.timestamp; 
 
         // if deadlinepassed call refund
         if (now > deadline)
            refund();
-        else if (amtRaised > targetAmt)
+        else if (raisedAmt > targetAmt)
            payout();
     }
     
@@ -49,7 +51,7 @@ contract Project{
         if (isClosed)
             throw;
         else
-            if (!owner.send(amtRaised)) throw;
+            if (!owner.send(raisedAmt)) throw;
         isClosed = true;
     }
 
@@ -68,5 +70,9 @@ contract Project{
             }
         }
         isClosed = true;
+    }
+
+    function projectString() returns (bytes32) {
+        return raisedAmt + "/" + targetAmt + " " + deadline;
     }
 }

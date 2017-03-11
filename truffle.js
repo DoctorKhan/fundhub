@@ -6,7 +6,12 @@ module.exports = {
     ],
     "app.css": [
       "stylesheets/app.css"
-    ]
+    ],
+    "fundhub.js": [
+	"javascripts/_vendor/angular.js",
+	"javascripts/fundhubController.js"
+    ],
+    "images/": "images/"
   },
   rpc: {
     host: "localhost",

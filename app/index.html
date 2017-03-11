@@ -1,22 +1,48 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>FundingHub - Default Truffle App</title>
+	<base href="." />
+  <title>FundHub - Cryptocurrency-based crowdfunding</title>
   <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
   <link href="./app.css" rel='stylesheet' type='text/css'>
   <script src="./app.js"></script>
+  <script src="./fundhub.js"></script>
 </head>
-<body>
-  <h1>FundingHub</h1>
-  <h2>Example Truffle Dapp</h2>
-  <h3>You have <span class="black"><span id="balance"></span> META</span></h3>
+<body ng-app="fundhubApp" ng-controller="fundhubController">
+  <h1>FundHub</h1>
+  <h2>The Cryptocurrency MegaCrowdFunder Dapp</h2>
+  <h3>You have <span class="black">
+		  <span id="balance">{{ balance }}</span> META</span></h3>
 
-  <br>
-  <h1>Send</h1>
-  <br><label for="amount">Amount:</label><input type="text" id="amount" placeholder="e.g., 95"></input>
-  <br><label for="receiver">To Address:</label><input type="text" id="receiver" placeholder="e.g., 0x93e66d9baea28c17d9fc393b53e3fbdd76899dae"></input>
-  <br><br><button id="send" onclick="sendCoin()">Send FundingHub</button>
+  <br> <h1>Contribute</h1>
+  <br><label for="amount">Contribute Amount:</label>
+  <input type="text" id="amount" ng-model="targetAmt" placeholder="e.g., 95"></input>
+  <br><label for="receiver">Project Address:</label>
+  <input type="text" id="receiver" ng-model="receiver" placeholder="e.g., 0x93e66d9baea28c17d9fc393b53e3fbdd76899dae"></input>
+  <br><br><button id="send" ng-click="contribute(amount, receiver)">Send Ether</button>
   <br><br>
+  
+  <h1>Create Project</h1>
+  <br><label for="amount">Project Name:</label>
+  <input type="text" id="projectName" ng-model="projectName" placeholder="e.g., 95"></input>
+  <br><label for="receiver">Project Description:</label>
+  <input type="text" id="projDescr" ng-model="projDescr" placeholder=""></input>
+ <label for="exampleInput">Choose a deadline:</label>
+   <input type="date" id="projDeadline" name="input" ng-model="projDeadline"
+         placeholder="yyyy-MM-dd" min="2018-12-31" max="2018-12-31" required /> 
+<br><br><button id="create" ng-click="createProject(targetAmt, projDeadline)">Create Project</button>
+  <br><br>
+
   <span id="status"></span>
+
+  <h1>Browse</h1>
+
+  <br><br><button id="browse" ng-click="browse()">Browse</button><br>
+  <table>
+    <tr ng-repeat="x in projects">
+        <td>{{ x.address }}</td>
+	<td>{{ x.deadline }}</td>
+    </tr>
+  </table>
 </body>
 </html>
