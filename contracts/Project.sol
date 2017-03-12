@@ -72,7 +72,4 @@ contract Project{
         isClosed = true;
     }
 
-    function projectString() returns (bytes32) {
-        return raisedAmt + "/" + targetAmt + " " + deadline;
-    }
 }

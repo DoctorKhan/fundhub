@@ -5,8 +5,17 @@ import "Project.sol";
 // This is a crowdfunding app 
 
 contract FundingHub {
-    address[] projects;
-    event NewProjectEvent(address indexed projectAddress, uint targetAmt, uint deadline); 
+   
+    struct project {
+        address owner;
+        uint targetAmt;
+        uint deadline;
+    } 
+    mapping (address => project) projectInfo;
+    address[] public projects;
+    
+
+    event NewProjectEvent(address newProjectAddr, address owner, uint targetAmt, uint deadline); 
     event getProjectInfoEvent(bytes32 projectsString);
 
     function FundingHub() {
@@ -20,24 +29,26 @@ contract FundingHub {
         4. The createProject() function should accept all constructor values that 
            the Project contract requires. */
 
-    function createProject(address projOwnerAddr, uint targetAmt, uint deadline) returns (address) {
+    function createProject(address owner, uint targetAmt, uint deadline) returns (address) {
     
         // deploy new project 
-        address newProjectAddr = new Project(projOwnerAddr, targetAmt, deadline);
+        address newProjectAddr = new Project(owner, targetAmt, deadline);
         projects.push(newProjectAddr); // keep track of address 
-        
-        NewProjectEvent(newProjectAddr, targetAmt, deadline); // Browser return
+        projectInfo[newProjectAddr] = project(owner, targetAmt, deadline);        
+        NewProjectEvent(newProjectAddr, owner, targetAmt, deadline); // Browser return
         return newProjectAddr; // Smart contract return
     }
 
-    function getProjectInfo() returns (address[]) {
-        var projectsString = "";
+    function getProject(uint index) constant returns (address) {
+        return projects[index];
+    }
+
+    function getProjectInfo() {
         for (uint ii = 0; ii < projects.length; ii++) {
-            var p = projects[ii];
-            projectsString += p.owner + " " + p.raisedAmt + "/" + p.targetAmt + " " + p.deadline + "\n";
+            var p = projectInfo[projects[ii]];
+            NewProjectEvent(projects[ii], p.owner, p.targetAmt, p.deadline);
         }
-        getProjectInfoEvent(projectsString);
-       } 
+    } 
     
     /* This function allows users to contribute to a Project identified by its address. 
     contribute calls the fund() function in the individual Project contract and 

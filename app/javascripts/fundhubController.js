@@ -10,6 +10,8 @@ app.controller("fundhubController", ['$scope', '$location', '$http', '$q', '$win
     $scope.balance = "";
     var fund;
     $scope.projects;
+    $scope.projArr = [];
+    var projArr = [];
 
     $scope.refreshBalance = function() {
 	    fund = FundingHub.deployed();
@@ -55,10 +57,21 @@ app.controller("fundhubController", ['$scope', '$location', '$http', '$q', '$win
 	    var targetEth = web3.toWei(targetAmt); 
 	    var ownerAddr = $scope.account;
 	    //console.log(deadline);
+	    fund.NewProjectEvent().watch(function(error, result) {
+		    if (error) {
+			    console.log(error);
+			    $timeout(function () {
+				    $scope.userStatus = ("Could not create project.");
+			    });
+			    return;
+		    }
+		    $timeout(function() {
+			    $scope.projArr.push(result['args']);
+			});
+		    projArr.push(result['args']);
+		    console.log(result['args']);
+	    });
 	    fund.createProject(ownerAddr, targetEth, deadline, {from: $scope.account, gas:1000000}); 
-	    //fund.NewProjectEvent().watch(function error, result) {
-	    
-	    // }
     }
 
     $scope.contribute = function(amount, receiver) {
