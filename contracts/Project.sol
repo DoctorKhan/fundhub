@@ -26,7 +26,7 @@ contract Project{
     the function must return the value to the originator of the transaction and call one of two functions. 
     If the full funding amount has been reached, the function must call payout. If the deadline has passed without the funding goal being reached, the function must call refund. */
     
-    function fund(address contributor, uint amtContributed) payable {
+    function fund(address contributor, uint amtContributed) payable returns (uint) {
         // if incorrect amt sent or project closed, abort
         if ((amtContributed != msg.value) || isClosed) throw;
 
@@ -37,13 +37,13 @@ contract Project{
         
         raisedAmt += amtContributed;
 
-        var now = block.timestamp; 
-
         // if deadlinepassed call refund
         if (now > deadline)
            refund();
         else if (raisedAmt > targetAmt)
            payout();
+
+        return raisedAmt;
     }
     
     // This is the function that sends all funds received in the contract to the owner of the project.
@@ -70,6 +70,7 @@ contract Project{
             }
         }
         isClosed = true;
+        raisedAmt = 0;
     }
 
 }

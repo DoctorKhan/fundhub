@@ -8,6 +8,7 @@ contract FundingHub {
    
     struct project {
         address owner;
+        uint raisedAmt;
         uint targetAmt;
         uint deadline;
     } 
@@ -15,7 +16,7 @@ contract FundingHub {
     address[] public projects;
     
 
-    event NewProjectEvent(address newProjectAddr, address owner, uint targetAmt, uint deadline); 
+    event NewProjectEvent(address newProjectAddr, address owner, uint raisedAmt, uint targetAmt, uint deadline); 
     event getProjectInfoEvent(bytes32 projectsString);
 
     function FundingHub() {
@@ -34,8 +35,9 @@ contract FundingHub {
         // deploy new project 
         address newProjectAddr = new Project(owner, targetAmt, deadline);
         projects.push(newProjectAddr); // keep track of address 
-        projectInfo[newProjectAddr] = project(owner, targetAmt, deadline);        
-        NewProjectEvent(newProjectAddr, owner, targetAmt, deadline); // Browser return
+        var raisedAmt = 0;
+        projectInfo[newProjectAddr] = project(owner, raisedAmt, targetAmt, deadline);        
+        NewProjectEvent(newProjectAddr, owner, raisedAmt, targetAmt, deadline); // Browser return
         return newProjectAddr; // Smart contract return
     }
 
@@ -43,10 +45,10 @@ contract FundingHub {
         return projects[index];
     }
 
-    function getProjectInfo() {
+    function getProjectInfo() constant {
         for (uint ii = 0; ii < projects.length; ii++) {
             var p = projectInfo[projects[ii]];
-            NewProjectEvent(projects[ii], p.owner, p.targetAmt, p.deadline);
+            NewProjectEvent(projects[ii], p.owner, p.raisedAmt, p.targetAmt, p.deadline);
         }
     } 
     
@@ -57,6 +59,7 @@ contract FundingHub {
     function contribute(address projectAddress, address contributor) payable {
         Project project = Project(projectAddress);
         var contribution = msg.value;
-        project.fund.value(contribution)(contributor, contribution);
+        var raisedAmt = project.fund.value(contribution)(contributor, contribution);
+        projectInfo[project].raisedAmt = raisedAmt;
     }
 }
