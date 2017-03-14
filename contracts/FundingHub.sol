@@ -7,6 +7,7 @@ import "Project.sol";
 contract FundingHub {
    
     struct project {
+        uint index;
         address owner;
         uint raisedAmt;
         uint targetAmt;
@@ -16,7 +17,7 @@ contract FundingHub {
     address[] public projects;
     
 
-    event NewProjectEvent(address newProjectAddr, address owner, uint raisedAmt, uint targetAmt, uint deadline); 
+    event NewProjectEvent(uint index, address newProjectAddr, address owner, uint raisedAmt, uint targetAmt, uint deadline); 
     event getProjectInfoEvent(bytes32 projectsString);
 
     function FundingHub() {
@@ -31,13 +32,15 @@ contract FundingHub {
            the Project contract requires. */
 
     function createProject(address owner, uint targetAmt, uint deadline) returns (address) {
-    
+        var index = projects.length;
+        var raisedAmt = 0;
+
         // deploy new project 
         address newProjectAddr = new Project(owner, targetAmt, deadline);
         projects.push(newProjectAddr); // keep track of address 
-        var raisedAmt = 0;
-        projectInfo[newProjectAddr] = project(owner, raisedAmt, targetAmt, deadline);        
-        NewProjectEvent(newProjectAddr, owner, raisedAmt, targetAmt, deadline); // Browser return
+        projectInfo[newProjectAddr] = project(index, owner, raisedAmt, targetAmt, deadline);
+        
+        NewProjectEvent(index, newProjectAddr, owner, raisedAmt, targetAmt, deadline); // Browser return
         return newProjectAddr; // Smart contract return
     }
 
@@ -45,10 +48,21 @@ contract FundingHub {
         return projects[index];
     }
 
+    function deleteProject(uint index) {
+        address projAddr = projects[index];
+        delete projectInfo[projAddr];
+
+        if (index < projects.length-1)
+            projects[index] = projects[projects.length-1];
+        delete projects[projects.length-1];
+        projects.length--;
+    }
+
     function getProjectInfo() constant {
         for (uint ii = 0; ii < projects.length; ii++) {
-            var p = projectInfo[projects[ii]];
-            NewProjectEvent(projects[ii], p.owner, p.raisedAmt, p.targetAmt, p.deadline);
+            var projectAddr = projects[ii];
+            var p = projectInfo[projectAddr];
+            NewProjectEvent(p.index, projectAddr, p.owner, p.raisedAmt, p.targetAmt, p.deadline);
         }
     } 
     
@@ -61,5 +75,9 @@ contract FundingHub {
         var contribution = msg.value;
         var raisedAmt = project.fund.value(contribution)(contributor, contribution);
         projectInfo[project].raisedAmt = raisedAmt;
+        
+        var p = projectInfo[project];
+
+        NewProjectEvent(p.index, project, p.owner, p.raisedAmt, p.targetAmt, p.deadline);
     }
 }

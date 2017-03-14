@@ -11,7 +11,12 @@ app.controller("fundhubController", ['$scope', '$location', '$http', '$q', '$win
     var fund;
     $scope.projects;
     $scope.projArr = [];
-    var projArr = [];
+
+    function setStatus(msg) {
+	$timeout(function() {
+		$scope.status = msg;
+	});
+    }
 
     $scope.refreshBalance = function() {
 	    fund = FundingHub.deployed();
@@ -27,7 +32,6 @@ app.controller("fundhubController", ['$scope', '$location', '$http', '$q', '$win
 		    });
 		    */
 	fund.getProjectInfo();
-	$scope.projects = fund.call().getProjectInfo();
 	console.log($scope.projects);
     };
 
@@ -49,29 +53,35 @@ app.controller("fundhubController", ['$scope', '$location', '$http', '$q', '$win
 	    });
 
 	    fund = FundingHub.deployed();
+	    
+	    fund.NewProjectEvent().watch(function(error, result) {
+		    if (error) {
+			    console.log(error);
+			    return;
+		    }
+
+		    $timeout(function() {
+			    $scope.projArr.push(result.args);
+		//		var pstruct = result.args;
+		//		var index = pstruct.index.toNumber();
+		//	    for (var ii = $scope.projArr.length; ii < index+1; ii++) {
+		//	    	$scope.projArr[ii] = pstruct;
+		//	    }
+			});
+		    console.log(result['args']);
+	    });
+
+	    fund.getProjectInfo();
     } 
 
     $scope.createProject = function(targetAmt, projDeadline) {
-    	
+    	    setStatus("Creating new project...");	
 	    var deadline = Math.round((new Date("2015-04-17 10:12:12".replace('-','/'))).getTime() / 1000);
 	    var targetEth = web3.toWei(targetAmt); 
 	    var ownerAddr = $scope.account;
 	    //console.log(deadline);
-	    fund.NewProjectEvent().watch(function(error, result) {
-		    if (error) {
-			    console.log(error);
-			    $timeout(function () {
-				    $scope.userStatus = ("Could not create project.");
-			    });
-			    return;
-		    }
-		    $timeout(function() {
-			    $scope.projArr.push(result['args']);
-			});
-		    projArr.push(result['args']);
-		    console.log(result['args']);
-	    });
 	    fund.createProject(ownerAddr, targetEth, deadline, {from: $scope.account, gas:1000000}); 
+	    setStatus("");
     }
 
     $scope.contribute = function(amount, receiver) {
@@ -82,7 +92,7 @@ app.controller("fundhubController", ['$scope', '$location', '$http', '$q', '$win
             from: $scope.account
         }).then(function() {
             setStatus("Transaction complete!");
-            $scope.refreshBalance();
+            //$scope.refreshBalance();
         }).catch(function(e) {
             console.log(e);
             setStatus("Error sending coin; see log.");

@@ -19,8 +19,7 @@
 
 <body ng-app="fundhubApp" ng-controller="fundhubController">
   <h1>FundHub</h1>
-
-  <h2>The Cryptocurrency MegaCrowdFunder Dapp</h2>
+  <span id=status>{{ status }}</span><br>
 
   <h3>You have <span class="black"><span id="balance">{{ balance
   }}</span> META</span></h3><br>
@@ -29,11 +28,11 @@
   <label for="amount">Contribute Amount:</label>
 
   <form>
-    <input type="text" id="amount" ng-model="targetAmt"
+    <input type="text" id="amount" ng-model="amount"
     placeholder="e.g., 95"><br>
     <label for="receiver">Project Address:</label> 
     <select name="proj-selct" id="receiver" ng-model="receiver">
-	    <option ng-repeat="proj in projArr" value="{{proj.newProjectAddr}}">{{proj.newProjectAddr}}</option>
+	    <option ng-repeat="proj in projArr track by $index" value="{{proj.newProjectAddr}}">{{proj.newProjectAddr}}</option>
     </select>	  
     <br>
     <button id="send" ng-click="contribute(amount, receiver)">Send
@@ -48,7 +47,11 @@
     <input type="text" id="projectName" ng-model="projectName"
     placeholder="e.g., 95"><br>
     <label for="receiver">Project Description:</label> <input type=
-    "text" id="projDescr" ng-model="projDescr" placeholder="">
+    "text" id="projDescr" ng-model="projDescr" placeholder=""><br>
+
+    <label for="targetAmt">Choose a target ether:</label>
+    <input type="number" name="target" ng-model="targetAmt"
+				       min="0" required><br>
     <label for="exampleInput">Choose a deadline:</label>
     <input type="date" id="projDeadline" name="input" ng-model=
     "projDeadline" placeholder="yyyy-MM-dd" min="2018-12-31" max=
@@ -65,13 +68,15 @@
 
   <table BORDER=1>
     <tr>
+	<td>Index</td>
       <td>Project Address</td>
       <td>Owner Address</td>
       <td>Raised</td>
       <td>Deadline</td>
     </tr>
 
-    <tr ng-repeat="x in projArr">
+    <tr ng-repeat="x in projArr track by $index">
+	    <td>{{ x.index }}</td>
       <td>{{ x.newProjectAddr }}</td>
 
       <td>{{ x.owner }}</td>
