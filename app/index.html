@@ -18,11 +18,11 @@
 </head>
 
 <body ng-app="fundhubApp" ng-controller="fundhubController">
-  <h1>FundHub</h1>
+	<h1>FundHub</h1><br>
   <span id=status>{{ status }}</span><br>
 
-  <h3>You have <span class="black"><span id="balance">{{ balance
-  }}</span> META</span></h3><br>
+  <!--h3>You have <span class="black"><span id="balance">{{ balance
+  }}</span> META</span></h3><br-->
 
   <h1>Contribute</h1><br>
   <label for="amount">Contribute Amount:</label>
@@ -46,16 +46,13 @@
   <form>
     <input type="text" id="projectName" ng-model="projectName"
     placeholder="e.g., 95"><br>
-    <label for="receiver">Project Description:</label> <input type=
-    "text" id="projDescr" ng-model="projDescr" placeholder=""><br>
 
     <label for="targetAmt">Choose a target ether:</label>
     <input type="number" name="target" ng-model="targetAmt"
 				       min="0" required><br>
     <label for="exampleInput">Choose a deadline:</label>
     <input type="date" id="projDeadline" name="input" ng-model=
-    "projDeadline" placeholder="yyyy-MM-dd" min="2018-12-31" max=
-    "2018-12-31" required=""><br>
+    "projDeadline" placeholder="yyyy-MM-dd" min="2017-03-15" required=""><br>
     <br>
     <button id="create" ng-click=
     "createProject(targetAmt, projDeadline)">Create

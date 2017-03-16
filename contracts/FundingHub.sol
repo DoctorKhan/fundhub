@@ -18,6 +18,7 @@ contract FundingHub {
     
 
     event NewProjectEvent(uint index, address newProjectAddr, address owner, uint raisedAmt, uint targetAmt, uint deadline); 
+    event ContributeEvent(uint index, address newProjectAddr, address owner, uint raisedAmt, uint targetAmt, uint deadline); 
     event getProjectInfoEvent(bytes32 projectsString);
 
     function FundingHub() {
@@ -78,6 +79,6 @@ contract FundingHub {
         
         var p = projectInfo[project];
 
-        NewProjectEvent(p.index, project, p.owner, p.raisedAmt, p.targetAmt, p.deadline);
+        ContributeEvent(p.index, project, p.owner, p.raisedAmt, p.targetAmt, p.deadline);
     }
 }

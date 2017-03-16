@@ -398,14 +398,21 @@ app.controller("fundhubController", ['$scope', '$location', '$http', '$q', '$win
 
 		    $timeout(function() {
 			    $scope.projArr.push(result.args);
-		//		var pstruct = result.args;
-		//		var index = pstruct.index.toNumber();
-		//	    for (var ii = $scope.projArr.length; ii < index+1; ii++) {
-		//	    	$scope.projArr[ii] = pstruct;
-		//	    }
 			});
 		    console.log(result['args']);
 	    });
+
+	fund.ContributeEvent().watch(function (error, result) {
+		if (error) {
+			console.log(error);
+			$timeout(function() {
+				setStatus("Contribution failed. See log.");
+			});
+		} else {
+
+			var index = result.args.i
+		}
+	});
 
 	    fund.getProjectInfo();
     } 
@@ -424,11 +431,24 @@ app.controller("fundhubController", ['$scope', '$location', '$http', '$q', '$win
 
         setStatus("Initiating transaction... (please wait)");
 
-        fund.contribute(receiver, amount, {
-            from: $scope.account
-        }).then(function() {
+        var projectAddress = receiver;
+	var contributor = $scope.account;
+	var amtWei = web3.toWei(amount);
+
+	fund.contribute(projectAddress, contributor, {from: contributor, value: amtWei, gas:1000000})
+        .then(function() {
             setStatus("Transaction complete!");
             //$scope.refreshBalance();
+	    var projFound = false;
+	    for (var ii = 0; ii < $scope.projArr.length; ii++) {
+		    if (projectAddress.toString() == $scope.projArr[ii].newProjectAddr.toString()) {
+			    $scope.projArr[ii].raisedAmt += amtWei;
+			    projFound = true;
+		    }
+		}
+	    if (projFound != true) {
+		    consle.log("Unable to find project to update raised.");
+	    }
         }).catch(function(e) {
             console.log(e);
             setStatus("Error sending coin; see log.");
