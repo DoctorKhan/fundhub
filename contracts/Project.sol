@@ -56,7 +56,7 @@ contract Project{
     }
 
     /* This function sends all individual contributions back to the respective contributor, or lets all contributors retrieve their contributions. */
-    function refund() {
+    function refundAll() {
         if (isClosed)
             throw;
         else {
@@ -66,11 +66,17 @@ contract Project{
             for (uint i = 0; i < contributors.length; i++) {
                 contribAddress = contributors[i];
                 contribAmt     = contributions[i];
-                if (!contribAddress.send(contribAmt)) throw;
+                withdrawRefund(contribAddress);
             }
         }
         isClosed = true;
         raisedAmt = 0;
     }
 
+    function withdrawRefund(address contribAddress) {
+        uint contribAmt = refunds[contribAddress];
+                if (!contribAddress.send(contribAmt)) {
+                    //refund amt
+                    refunds[contribAddress] = contribAmt;
+                }
 }
