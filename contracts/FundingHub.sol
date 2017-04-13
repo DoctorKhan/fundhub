@@ -15,7 +15,7 @@ contract FundingHub {
     } 
     mapping (address => project) projectInfo;
     address[] public projects;
-    
+    uint numProjects;    
 
     event NewProjectEvent(uint index, address newProjectAddr, address owner, uint raisedAmt, uint targetAmt, uint deadline); 
     event ContributeEvent(uint index, address newProjectAddr, address owner, uint raisedAmt, uint targetAmt, uint deadline); 
@@ -33,14 +33,15 @@ contract FundingHub {
            the Project contract requires. */
 
     function createProject(address owner, uint targetAmt, uint deadline) returns (address) {
-        var index = projects.length;
+        var index = numProjects;
         var raisedAmt = 0;
 
         // deploy new project 
         address newProjectAddr = new Project(owner, targetAmt, deadline);
         projects.push(newProjectAddr); // keep track of address 
         projectInfo[newProjectAddr] = project(index, owner, raisedAmt, targetAmt, deadline);
-        
+       
+        numProjects++; 
         NewProjectEvent(index, newProjectAddr, owner, raisedAmt, targetAmt, deadline); // Browser return
         return newProjectAddr; // Smart contract return
     }
@@ -65,7 +66,11 @@ contract FundingHub {
             var p = projectInfo[projectAddr];
             NewProjectEvent(p.index, projectAddr, p.owner, p.raisedAmt, p.targetAmt, p.deadline);
         }
-    } 
+    }
+
+   function getNumProjects() constant returns (uint) {
+      return numProjects;
+   } 
     
     /* This function allows users to contribute to a Project identified by its address. 
     contribute calls the fund() function in the individual Project contract and 

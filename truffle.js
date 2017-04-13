@@ -10,8 +10,7 @@ module.exports = {
     "fundhub.js": [
 	"javascripts/_vendor/angular.js",
 	"javascripts/fundhubController.js"
-    ],
-    "images/": "images/"
+    ]
   },
   rpc: {
     host: "localhost",

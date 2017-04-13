@@ -31,7 +31,6 @@ app.controller("fundhubController", ['$scope', '$location', '$http', '$q', '$win
 			    setStatus("Error getting balance; see log.");
 		    });
 		    */
-	fund.getProjectInfo();
 	console.log($scope.projects);
     };
 
@@ -66,6 +65,8 @@ app.controller("fundhubController", ['$scope', '$location', '$http', '$q', '$win
 		    console.log(result['args']);
 	    });
 
+	fund.getProjectInfo();
+	
 	fund.ContributeEvent().watch(function (error, result) {
 		if (error) {
 			console.log(error);

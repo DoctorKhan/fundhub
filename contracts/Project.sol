@@ -1,6 +1,6 @@
 pragma solidity ^0.4.2;
 
-contract Project{
+contract Project {
     address owner;
     uint raisedAmt; // in wei
     uint targetAmt; // the target goal to be raised
@@ -11,6 +11,7 @@ contract Project{
     
     uint[] contributions;
     address[] contributors;
+    mapping (address => uint) refunds;
 
     function Project(address _owner, uint _targetAmt, uint _deadline) {
         owner = _owner;
@@ -39,7 +40,7 @@ contract Project{
 
         // if deadlinepassed call refund
         if (now > deadline)
-           refund();
+           refundAll();
         else if (raisedAmt > targetAmt)
            payout();
 
@@ -56,7 +57,7 @@ contract Project{
     }
 
     /* This function sends all individual contributions back to the respective contributor, or lets all contributors retrieve their contributions. */
-    function refundAll() {
+    function refundAll() internal {
         if (isClosed)
             throw;
         else {
@@ -66,6 +67,7 @@ contract Project{
             for (uint i = 0; i < contributors.length; i++) {
                 contribAddress = contributors[i];
                 contribAmt     = contributions[i];
+                refunds[contribAddress] = contribAmt;
                 withdrawRefund(contribAddress);
             }
         }
@@ -73,10 +75,11 @@ contract Project{
         raisedAmt = 0;
     }
 
-    function withdrawRefund(address contribAddress) {
+    function withdrawRefund(address contribAddress) internal {
         uint contribAmt = refunds[contribAddress];
                 if (!contribAddress.send(contribAmt)) {
                     //refund amt
                     refunds[contribAddress] = contribAmt;
                 }
+    }
 }
