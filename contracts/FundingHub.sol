@@ -54,14 +54,14 @@ contract FundingHub {
         address projAddr = projects[index];
         delete projectInfo[projAddr];
 
-        if (index < projects.length-1)
-            projects[index] = projects[projects.length-1];
-        delete projects[projects.length-1];
-        projects.length--;
+        if (index < numProjects-1)
+            projects[index] = projects[numProjects-1];
+        delete projects[numProjects-1];
+        numProjects--;
     }
 
     function getProjectInfo() constant {
-        for (uint ii = 0; ii < projects.length; ii++) {
+        for (uint ii = 0; ii < numProjects; ii++) {
             var projectAddr = projects[ii];
             var p = projectInfo[projectAddr];
             NewProjectEvent(p.index, projectAddr, p.owner, p.raisedAmt, p.targetAmt, p.deadline);
